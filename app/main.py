@@ -9,21 +9,28 @@ def health():
 @app.route('/api/divide')
 def divide():
     """This has a bug - no zero check!"""
-    a = float(request.args.get('a', 10))
-    b = float(request.args.get('b', 2))
+    try:
+        a = float(request.args.get('a', 10))
+        b = float(request.args.get('b', 2))
 
-    # 🐛 BUG: No zero division check
-    result = a / b
+        if b == 0:
+            return jsonify({"error": "Cannot divide by zero"}), 400
 
-    return jsonify({"result": result})
+        result = a / b
+
+        return jsonify({"result": result})
+    except ValueError:
+        return jsonify({"error": "Invalid input for 'a' or 'b'. Must be numbers."}), 400
 
 @app.route('/api/users/<int:user_id>')
 def get_user(user_id):
     """This has a bug - no user validation!"""
     users = {1: "Alice", 2: "Bob", 3: "Charlie"}
 
-    # 🐛 BUG: Will crash if user_id not in dict
-    user = users[user_id]
+    user = users.get(user_id)
+
+    if user is None:
+        return jsonify({"error": f"User with ID {user_id} not found"}), 404
 
     return jsonify({"id": user_id, "name": user})
 
