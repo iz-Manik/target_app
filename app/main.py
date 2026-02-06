@@ -13,6 +13,8 @@ def divide():
     b = float(request.args.get('b', 2))
 
     # 🐛 BUG: No zero division check
+    if b == 0:
+        return jsonify({"error": "Cannot divide by zero"}), 400
     result = a / b
 
     return jsonify({"result": result})
@@ -23,6 +25,8 @@ def get_user(user_id):
     users = {1: "Alice", 2: "Bob", 3: "Charlie"}
 
     # 🐛 BUG: Will crash if user_id not in dict
+    if user_id not in users:
+        return jsonify({"error": "User not found"}), 404
     user = users[user_id]
 
     return jsonify({"id": user_id, "name": user})
